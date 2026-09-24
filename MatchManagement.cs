@@ -540,7 +540,7 @@ namespace MatchZy
             var steamId = player.SteamID;
             try
             {
-                if (matchzyTeam1.teamPlayers != null && matchzyTeam1.teamPlayers[steamId.ToString()] != null)
+                if (FindPlayer(matchzyTeam1.teamPlayers, steamId.ToString()) != null)
                 {
                     if (teamSides[matchzyTeam1] == "CT")
                     {
@@ -552,7 +552,7 @@ namespace MatchZy
                     }
 
                 }
-                else if (matchzyTeam2.teamPlayers != null && matchzyTeam2.teamPlayers[steamId.ToString()] != null)
+                else if (FindPlayer(matchzyTeam2.teamPlayers, steamId.ToString()) != null)
                 {
                     if (teamSides[matchzyTeam2] == "CT")
                     {
@@ -563,7 +563,7 @@ namespace MatchZy
                         playerTeam = CsTeam.Terrorist;
                     }
                 }
-                else if (matchConfig.Spectators != null && matchConfig.Spectators[steamId.ToString()] != null)
+                else if (FindPlayer(matchConfig.Spectators, steamId.ToString()) != null)
                 {
                     playerTeam = CsTeam.Spectator;
                 }
