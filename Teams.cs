@@ -135,7 +135,8 @@ namespace MatchZy
 
             if (!ulong.TryParse(arg, out ulong steamId))
             {
-                command.ReplyToCommand($"Invalid Steam64");
+                command.ReplyToCommand("Invalid Steam64");
+                return;
             }
 
             bool success = RemovePlayerFromTeam(steamId.ToString());
@@ -183,16 +184,18 @@ namespace MatchZy
 
             foreach (var team in teams)
             {
-                if (team is null) continue;
                 if (team is JObject jObjectTeam)
                 {
-                    jObjectTeam.Remove(steamId);
-                    return true;
+                    if (jObjectTeam.Remove(steamId)) return true;
                 }
                 else if (team is JArray jArrayTeam)
                 {
-                    jArrayTeam.Remove(steamId);
-                    return true;
+                    JToken? player = jArrayTeam.FirstOrDefault(entry => entry.ToString() == steamId);
+                    if (player != null)
+                    {
+                        player.Remove();
+                        return true;
+                    }
                 }
             }
             return false;
