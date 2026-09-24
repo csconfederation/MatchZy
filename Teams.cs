@@ -186,9 +186,13 @@ namespace MatchZy
             if (players is JObject playerObject) return playerObject.Property(steamId);
             if (players is JArray playerArray)
             {
-                return playerArray.FirstOrDefault(entry =>
-                    entry is JObject playerEntry && playerEntry.Property(steamId) != null ||
-                    entry.Type == JTokenType.String && entry.ToString() == steamId);
+                foreach (JToken entry in playerArray)
+                {
+                    if (entry is JObject playerEntry && playerEntry.Property(steamId) is JProperty player)
+                        return player;
+                    if (entry.Type == JTokenType.String && entry.ToString() == steamId)
+                        return entry;
+                }
             }
             return null;
         }
