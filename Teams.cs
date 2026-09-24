@@ -83,7 +83,7 @@ namespace MatchZy
                 command.ReplyToCommand("Cannot add players during halftime. Please wait until the next round starts.");
                 return;
             }
-            if (command.ArgCount < 3)
+            if (command.ArgCount < 4)
             {
                 command.ReplyToCommand("Usage: matchzy_addplayer <steam64> <team> \"<name>\"");
                 return; 
@@ -159,6 +159,9 @@ namespace MatchZy
 
         public bool AddPlayerToTeam(string steamId, string name, JToken? team)
         {
+            if (!ulong.TryParse(steamId, out ulong parsedSteamId) || parsedSteamId == 0) return false;
+            steamId = parsedSteamId.ToString();
+
             if (FindPlayer(matchzyTeam1.teamPlayers, steamId) != null) return false;
             if (FindPlayer(matchzyTeam2.teamPlayers, steamId) != null) return false;
             if (FindPlayer(matchConfig.Spectators, steamId) != null) return false;
@@ -193,15 +196,18 @@ namespace MatchZy
         public bool RemovePlayerFromTeam(string steamId)
         {
             List<JToken?> teams = [matchzyTeam1.teamPlayers, matchzyTeam2.teamPlayers, matchConfig.Spectators];
+            bool removed = false;
 
             foreach (var team in teams)
             {
-                JToken? player = FindPlayer(team, steamId);
-                if (player == null) continue;
-                player.Remove();
-                return true;
+                JToken? player;
+                while ((player = FindPlayer(team, steamId)) != null)
+                {
+                    player.Remove();
+                    removed = true;
+                }
             }
-            return false;
+            return removed;
         }
     }
 }
