@@ -62,16 +62,13 @@ namespace MatchZy
 
         }
 
-        // A relative tv_record path resolves against the first Game search path, which is
-        // csgo/addons/metamod when Metamod is installed, so MatchZy/ would need to exist there.
-        // Record to csgo/<path> explicitly, where the demo directory is created and uploads look.
+        // Relative tv_record paths resolve under csgo/addons/metamod when Metamod is installed.
         private void TvRecord(string csgoRelativePath)
         {
             string fullPath = Path.Join(Server.GameDirectory, "csgo", csgoRelativePath).Replace('\\', '/');
             string arg = fullPath.Contains(' ') ? $"\"{fullPath}\"" : fullPath;
             Server.ExecuteCommand($"tv_record {arg}");
 
-            // tv_record reports failures only to the console; surface them in the MatchZy log.
             AddTimer(5.0f, () =>
             {
                 if (isDemoRecording && !File.Exists(fullPath))
