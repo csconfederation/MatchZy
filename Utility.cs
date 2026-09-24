@@ -1430,13 +1430,8 @@ namespace MatchZy
 
         public void WriteClientNamesInFile(StringBuilder sb, JToken? players)
         {
-            if (players is JArray playerArray)
-            {
-                foreach (JToken entry in playerArray) WriteClientNamesInFile(sb, entry);
-                return;
-            }
-            if (players is not JObject playerObject) return;
-            foreach (JProperty player in playerObject.Properties())
+            if (players is not JObject) return;
+            foreach (JProperty player in players)
             {
                 string steamId = player.Name;
                 string escapedName = player.Value.ToString().Replace("\"", "\\\"").Trim();

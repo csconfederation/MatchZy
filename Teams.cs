@@ -83,7 +83,7 @@ namespace MatchZy
                 command.ReplyToCommand("Cannot add players during halftime. Please wait until the next round starts.");
                 return;
             }
-            if (command.ArgCount < 4)
+            if (command.ArgCount < 3)
             {
                 command.ReplyToCommand("Usage: matchzy_addplayer <steam64> <team> \"<name>\"");
                 return; 
@@ -135,7 +135,7 @@ namespace MatchZy
 
             if (!ulong.TryParse(arg, out ulong steamId))
             {
-                command.ReplyToCommand("Invalid Steam64");
+                command.ReplyToCommand($"Invalid Steam64");
                 return;
             }
 
@@ -174,7 +174,7 @@ namespace MatchZy
             }
             else if (team is JArray jArrayTeam)
             {
-                jArrayTeam.Add(new JObject { [steamId] = name });
+                jArrayTeam.Add(steamId);
                 LoadClientNames();
                 return true;
             }
@@ -184,16 +184,7 @@ namespace MatchZy
         private static JToken? FindPlayer(JToken? players, string steamId)
         {
             if (players is JObject playerObject) return playerObject.Property(steamId);
-            if (players is JArray playerArray)
-            {
-                foreach (JToken entry in playerArray)
-                {
-                    if (entry is JObject playerEntry && playerEntry.Property(steamId) is JProperty player)
-                        return player;
-                    if (entry.Type == JTokenType.String && entry.ToString() == steamId)
-                        return entry;
-                }
-            }
+            if (players is JArray playerArray) return playerArray.FirstOrDefault(entry => entry.ToString() == steamId);
             return null;
         }
 
