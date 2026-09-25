@@ -136,6 +136,7 @@ namespace MatchZy
             if (!ulong.TryParse(arg, out ulong steamId))
             {
                 command.ReplyToCommand($"Invalid Steam64");
+                return;
             }
 
             bool success = RemovePlayerFromTeam(steamId.ToString());
@@ -158,9 +159,12 @@ namespace MatchZy
 
         public bool AddPlayerToTeam(string steamId, string name, JToken? team)
         {
-            if (matchzyTeam1.teamPlayers != null && matchzyTeam1.teamPlayers[steamId] != null) return false;
-            if (matchzyTeam2.teamPlayers != null && matchzyTeam2.teamPlayers[steamId] != null) return false;
-            if (matchConfig.Spectators != null && matchConfig.Spectators[steamId] != null) return false;
+            if (!ulong.TryParse(steamId, out ulong parsedSteamId) || parsedSteamId == 0) return false;
+            steamId = parsedSteamId.ToString();
+
+            if (FindPlayer(matchzyTeam1.teamPlayers, steamId) != null) return false;
+            if (FindPlayer(matchzyTeam2.teamPlayers, steamId) != null) return false;
+            if (FindPlayer(matchConfig.Spectators, steamId) != null) return false;
 
             if (team is JObject jObjectTeam)
             {
@@ -170,32 +174,35 @@ namespace MatchZy
             }
             else if (team is JArray jArrayTeam)
             {
-                jArrayTeam.Add(name);
+                jArrayTeam.Add(steamId);
                 LoadClientNames();
                 return true;
             }
             return false;
         }
 
+        private static JToken? FindPlayer(JToken? players, string steamId)
+        {
+            if (players is JObject playerObject) return playerObject.Property(steamId);
+            if (players is JArray playerArray) return playerArray.FirstOrDefault(entry => entry.ToString() == steamId);
+            return null;
+        }
+
         public bool RemovePlayerFromTeam(string steamId)
         {
             List<JToken?> teams = [matchzyTeam1.teamPlayers, matchzyTeam2.teamPlayers, matchConfig.Spectators];
+            bool removed = false;
 
             foreach (var team in teams)
             {
-                if (team is null) continue;
-                if (team is JObject jObjectTeam)
+                JToken? player;
+                while ((player = FindPlayer(team, steamId)) != null)
                 {
-                    jObjectTeam.Remove(steamId);
-                    return true;
-                }
-                else if (team is JArray jArrayTeam)
-                {
-                    jArrayTeam.Remove(steamId);
-                    return true;
+                    player.Remove();
+                    removed = true;
                 }
             }
-            return false;
+            return removed;
         }
     }
 }

@@ -1430,7 +1430,7 @@ namespace MatchZy
 
         public void WriteClientNamesInFile(StringBuilder sb, JToken? players)
         {
-            if (players == null) return;
+            if (players is not JObject) return;
             foreach (JProperty player in players)
             {
                 string steamId = player.Name;
