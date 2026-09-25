@@ -5,8 +5,6 @@ namespace MatchZy;
 
 public partial class MatchZy
 {
-    /// <summary>Refreshes scoreboard tags after a readiness or match phase change.</summary>
-    /// <example>Call after StartLive sets isMatchLive to show configured team tags.</example>
     public void HandleClanTags()
     {
         if (!clanTagsEnabled.Value) return;
@@ -18,7 +16,7 @@ public partial class MatchZy
         if (!clanTagsEnabled.Value || player is not { IsValid: true, IsBot: false, IsHLTV: false }) return;
 
         // Game-event values expire after the callback, so keep only the SteamID.
-        ulong steamId = player!.SteamID;
+        ulong steamId = player.SteamID;
         AddTimer(0.25f, () => ApplyClanTag(Utilities.GetPlayerFromSteamId64(steamId)));
     }
 
@@ -45,8 +43,8 @@ public partial class MatchZy
         if (!isMatchLive) return "";
 
         string steamId = player.SteamID.ToString();
-        if (matchzyTeam1.teamPlayers?[steamId] != null) return matchzyTeam1.teamTag;
-        if (matchzyTeam2.teamPlayers?[steamId] != null) return matchzyTeam2.teamTag;
+        if (FindPlayer(matchzyTeam1.teamPlayers, steamId) != null) return matchzyTeam1.teamTag;
+        if (FindPlayer(matchzyTeam2.teamPlayers, steamId) != null) return matchzyTeam2.teamTag;
 
         string side = player.TeamNum == 3 ? "CT" : "TERRORIST";
         return reverseTeamSides.TryGetValue(side, out Team? team) ? team.teamTag : "";

@@ -50,7 +50,7 @@ There are two ways to create an admin for MatchZy; you can choose the most conve
 ### Configuring MatchZy Settings (ConVars)
 Again, inside `csgo/cfg/MatchZy`, a file named `config.cfg` should be present. This file is executed whenever the plugin is loaded. If you make any changes in this file and want to reload the config, simply execute `exec MatchZy/config.cfg` command on the server.
 
-####`matchzy_clan_tags_enabled`
+#### `matchzy_clan_tags_enabled`
 :   Show `[Ready]` or `[Unready]` beside players during warmup, then the optional team `tag` from the match configuration during live play. MatchZy updates the scoreboard when readiness, team, or match phase changes. Keep this disabled if another plugin owns player clan tags.<br>**`Default: false`**
 
 ####`matchzy_knife_enabled_default`
