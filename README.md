@@ -1,3 +1,26 @@
+# CSC MatchZy fork
+
+This is [Counter Strike Confederation's](https://github.com/csconfederation) fork of
+[upstream MatchZy](https://github.com/shobhit-pathak/MatchZy). CSC maintains the changes below
+for its servers; they may not be present in upstream releases. `dev` is the working branch and
+`main` is the release branch.
+
+## CSC changes
+
+- Builds against the official CounterStrikeSharp API `1.0.375` release on .NET 10.
+- Records demos using an absolute path under `csgo/`, avoiding Metamod's relative write path.
+- Fixes `removeplayer` for team2, spectators, and duplicate Steam IDs; player-list arrays hold Steam IDs.
+- Adds optional scoreboard clan tags from [upstream PR #407](https://github.com/shobhit-pathak/MatchZy/pull/407).
+
+To show `[Ready]` and `[Unready]` during warmup, set `matchzy_clan_tags_enabled true` in
+`cfg/MatchZy/config.cfg`. It is off by default. Leave `team1.tag` and `team2.tag` out of the match
+JSON, or set them to `""`, to leave clan tags blank during live play. The MatchZy integration still
+needs a live match test before enabling it on CSC servers.
+
+The original MatchZy README follows.
+
+---
+
 MatchZy - Match Plugin for CS2!
 ==============
 
